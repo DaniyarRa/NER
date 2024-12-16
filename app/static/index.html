@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Input to FastAPI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-top: 20px;
+            color: #4CAF50;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 50px auto;
+            background: #1e1e1e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        form a {
+            font-size: 1.2em;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+            background: #2c2c2c;
+            color: #ffffff;
+        }
+
+        label {
+            margin-right: 10px;
+            font-size: 1em;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: #4CAF50;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .spinner-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            visibility: hidden; /* Initially hidden */
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #response {
+            margin: 20px auto;
+            max-width: 500px;
+            padding: 15px;
+            background: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #ffffff;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+    <h1>Named Entity Recognition on Kazakh Language</h1>
+
+    <form id="text-form">
+        <a>Text to analyze: </a>
+        <input type="text" id="text-input" required />
+        <br><br>
+        <a>Aggregation strategy:</a>
+        <label>
+            <input type="radio" name="option" value="None" checked /> None
+        </label>
+        <label>
+            <input type="radio" name="option" value="Simple" /> Simple
+        </label>
+        <br><br>
+
+        <button type="submit">Send</button>
+    </form>
+
+    <div class="spinner-container" id="spinner-container">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="response"></div>
+
+    <script>
+        document.getElementById("text-form").addEventListener("submit", async function(event) {
+            event.preventDefault()
+
+            document.getElementById("spinner-container").style.visibility = "visible";
+
+            const text = document.getElementById("text-input").value;
+            const option = document.querySelector('input[name="option"]:checked').value;
+
+            const responseDiv = document.getElementById("response");
+
+            try {
+                const response = await fetch("/label", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        option: option
+                    })
+                });
+
+                const data = await response.json();
+                responseDiv.innerHTML = data.message.replace(/\n/g, '<br>');
+            } catch (error) {
+                responseDiv.innerHTML = error;
+            } finally {
+                document.getElementById("spinner-container").style.visibility = "hidden";
+            }
+        });
+    </script>
+</body>
+</html>
