@@ -111,16 +111,6 @@
     <form id="text-form">
         <a>Text to analyze: </a>
         <input type="text" id="text-input" required />
-        <br><br>
-        <a>Aggregation strategy:</a>
-        <label>
-            <input type="radio" name="option" value="None" checked /> None
-        </label>
-        <label>
-            <input type="radio" name="option" value="Simple" /> Simple
-        </label>
-        <br><br>
-
         <button type="submit">Send</button>
     </form>
 
@@ -137,7 +127,6 @@
             document.getElementById("spinner-container").style.visibility = "visible";
 
             const text = document.getElementById("text-input").value;
-            const option = document.querySelector('input[name="option"]:checked').value;
 
             const responseDiv = document.getElementById("response");
 
@@ -148,8 +137,7 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        text: text,
-                        option: option
+                        text: text
                     })
                 });
 
